@@ -17,9 +17,9 @@ namespace monoGame.Actors.Movables
         protected Vector2 Acceleration { get; set; }
         protected float Velocity { get; set; }
         protected bool IsPhysicable { get; set; }
-        protected Movable(Sprite sprite, Vector2 position, bool isPhysicable = false, float normalFriction = 0.8f) : base(sprite) 
+        protected Movable(Sprite sprite, Vector2 position, bool isPhysicable = false, float normalFriction = 0.8f) : base(sprite, position) 
         {
-            Position = position;
+            IsMovable = true;
             IsPhysicable = isPhysicable;
             Friction = normalFriction;
         }
@@ -65,7 +65,7 @@ namespace monoGame.Actors.Movables
             Acceleration = Vector2.Zero;
         }
 
-        public override void TestSolidTileCollision(TileMap tileMap)
+        public void TestSolidTileCollision(TileMap tileMap)
         {
             bool isColiding = false;
             int nbColliderRect = 0;
@@ -112,8 +112,6 @@ namespace monoGame.Actors.Movables
 
                     collisionRect = GetCollisionRectPosition(Sprite.CollisionRectangle[nbColliderRect]);
                     bottomRightTile = tileMap.GetTile(collisionRect.Right, collisionRect.Bottom - tileMap.TileHeight / 4);
-
-                    Debug.WriteLine($"Tile: {collisionRect.Right / tileMap.TileWidth * tileMap.TileWidth}, {collisionRect.Bottom / tileMap.TileHeight * tileMap.TileHeight}");
 
                     if (bottomRightTile != null && bottomRightTile.IsSolid && collisionRect.Right <= tileMap.GetSolidCollisionRectPos(collisionRect.Right / tileMap.TileWidth * tileMap.TileWidth, (collisionRect.Bottom - (tileMap.TileHeight / 4)) / tileMap.TileHeight * tileMap.TileHeight).X)
                     {

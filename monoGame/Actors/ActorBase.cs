@@ -15,8 +15,10 @@ namespace monoGame.Actors
         protected bool FacingRight { get; set; } = true;
         private SpriteEffects Flip { get => FacingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally; }
         public float Scale { get; set; } = 1;
+        public bool IsMovable { get; set; }
         protected float ScaleBaseMOdificator { get; set; } = 1;
-        protected float TotalScale
+        public bool ToDelete { get; set; } = false;
+        public float TotalScale
         {
             get => Scale * ScaleBaseMOdificator;
         }
@@ -26,9 +28,13 @@ namespace monoGame.Actors
         public Vector2 Position { get; protected set; }
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera);
         public abstract void Update(GameTime gameTime);
+        private List<ActorBase> Colliders { get; set; } = new List<ActorBase>();
+        public bool IsVisible { get; set; } = true;
 
-        protected ActorBase(Sprite sprite)
+        protected ActorBase(Sprite sprite, Vector2 position)
         {
+            IsMovable = false;
+            Position = position;
             Sprite = sprite;
             AnimationSpeed = Sprite.AnimationSpeed;
             Frame = 0;
@@ -49,31 +55,34 @@ namespace monoGame.Actors
 
         protected virtual void DrawBase(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            if(Frame >= Sprite.SpriteFrames.Length)
+            if (IsVisible)
             {
-                Frame = 0;
-            }
-            if(camera == null)
-            {
-                spriteBatch.Draw(Sprite.Texture, Position, Sprite.SpriteFrames[Frame], Color.White, 0f, new Vector2(), TotalScale, Flip, 0f);
-                if (ParamsManager.gameMode == GameMode.DEBUG)
+                if (Frame >= Sprite.SpriteFrames.Length)
                 {
-                    foreach (Rectangle rectangle in Sprite.CollisionRectangle)
+                    Frame = 0;
+                }
+                if (camera == null)
+                {
+                    spriteBatch.Draw(Sprite.Texture, Position, Sprite.SpriteFrames[Frame], Color.White, 0f, new Vector2(), TotalScale, Flip, 0f);
+                    if (ParamsManager.gameMode == GameMode.DEBUG)
                     {
-                        spriteBatch.Draw(SpriteService.Instance.Textures[Textures.RedBackground], GetCollisionRectPosition(rectangle), new Color(Color.Blue, 75));
+                        foreach (Rectangle rectangle in Sprite.CollisionRectangle)
+                        {
+                            spriteBatch.Draw(SpriteService.Instance.Textures[Textures.RedBackground], GetCollisionRectPosition(rectangle), new Color(Color.Blue, 75));
+                        }
                     }
                 }
-            }
-            else
-            {
-                spriteBatch.Draw(Sprite.Texture, Vector2.Add(Position, camera.Offset) , Sprite.SpriteFrames[Frame], Color.White, 0f, new Vector2(), TotalScale, Flip, 0f);
-                if (ParamsManager.gameMode == GameMode.DEBUG)
+                else
                 {
-                    foreach (Rectangle rectangle in Sprite.CollisionRectangle)
+                    spriteBatch.Draw(Sprite.Texture, Vector2.Add(Position, camera.Offset), Sprite.SpriteFrames[Frame], Color.White, 0f, new Vector2(), TotalScale, Flip, 0f);
+                    if (ParamsManager.gameMode == GameMode.DEBUG)
                     {
-                        Rectangle collision = GetCollisionRectPosition(rectangle);
-                        Rectangle drawCollision = new Rectangle(collision.X + (int)camera.Offset.X, collision.Y + (int)camera.Offset.Y, collision.Width, collision.Height);
-                        spriteBatch.Draw(SpriteService.Instance.Textures[Textures.RedBackground], drawCollision, new Color(Color.Blue, 75));
+                        foreach (Rectangle rectangle in Sprite.CollisionRectangle)
+                        {
+                            Rectangle collision = GetCollisionRectPosition(rectangle);
+                            Rectangle drawCollision = new Rectangle(collision.X + (int)camera.Offset.X, collision.Y + (int)camera.Offset.Y, collision.Width, collision.Height);
+                            spriteBatch.Draw(SpriteService.Instance.Textures[Textures.RedBackground], drawCollision, new Color(Color.Blue, 75));
+                        }
                     }
                 }
             }
@@ -85,9 +94,21 @@ namespace monoGame.Actors
         }
         public virtual void ManageSpriteSpeedBased() {}
 
-        public abstract bool IsColliding(ActorBase actor);
-        public abstract void Subscribe(ActorBase actor);
-        public abstract void Emit();
-        public abstract void TestSolidTileCollision(TileMap tileMap);
+        public virtual void IsColliding(ActorBase actor)
+        {
+            foreach(ActorBase act in Colliders)
+            {
+                if (Position.X + (Sprite.Width * TotalScale) >= act.Position.X && Position.X <= act.Position.X + (act.Sprite.Width * TotalScale) && Position.Y <= act.Position.Y + (act.Sprite.Height * TotalScale) && Position.Y + (Sprite.Height * TotalScale) >= act.Position.Y)
+                {
+                    act.Emit(this);
+                    Emit(this);
+                }
+            }
+        }
+        public virtual void Subscribe(ActorBase actor)
+        {
+            Colliders.Add(actor);
+        }
+        public abstract void Emit(ActorBase actor);
     }
 }

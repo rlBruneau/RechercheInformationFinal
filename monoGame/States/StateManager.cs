@@ -45,5 +45,11 @@ namespace monoGame.States
 
             return CurrentState;
         }
+
+        public void RestartGame()
+        {
+            GameState.Instance.RestartGame();
+            SetCurrentState(StateEnum.GAME);
+        }
     }
 }

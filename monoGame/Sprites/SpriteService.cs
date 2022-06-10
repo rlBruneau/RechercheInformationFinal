@@ -51,6 +51,8 @@ namespace monoGame.Sprites
            CreateSprite(monoGame.Sprites.Sprites.MarioRun, Textures[monoGame.Sprites.Textures.MarioLuiji], 20, 8, 16, 16, 2, 3, 100f);
            CreateSprite(monoGame.Sprites.Sprites.MarioIdle, Textures[monoGame.Sprites.Textures.MarioLuiji], 0, 8, 16, 16, 0, 1, 0);
            CreateSprite(monoGame.Sprites.Sprites.MarioJump, Textures[monoGame.Sprites.Textures.MarioLuiji], 96, 8, 16, 16, 0, 1, 0);
+           CreateSprite(monoGame.Sprites.Sprites.Coin, Textures[monoGame.Sprites.Textures.MarioTiles], 298, 95, 16, 16, 1, 3, 137f);
+           CreateSprite(monoGame.Sprites.Sprites.Gate, Textures[monoGame.Sprites.Textures.RedBackground], 0, 0, 32, 32, 0, 1, 0);
         }
 
         public Sprite CreateSprite(Sprites spriteEnum, Texture2D texture, int xPos, int yPos, int width, int height, int offset, int nbFrame, float generalSpeed)

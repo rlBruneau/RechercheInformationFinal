@@ -13,7 +13,7 @@ namespace monoGame.Actors.Movables.Players
 {
     public class Mario : Movable
     {
-        private int JumpImpulse { get; set; } = -5;
+        private int JumpImpulse { get; set; } = -3;
         private List<ICollidable> Collidables { get; set; } = new List<ICollidable>();
         public Mario(Sprite sprite, Vector2 position, bool isPhysicable = false, float normalFriction = 0.8f) : base(sprite, position, isPhysicable, normalFriction) 
         {
@@ -21,7 +21,7 @@ namespace monoGame.Actors.Movables.Players
             InputManager.Instance.MoveLeft = new CommandInput(MoveLeftPressed);
             InputManager.Instance.MoveRight = new CommandInput(MoveRightPressed);
 
-            //ScaleBaseMOdificator = 2f;
+            ScaleBaseMOdificator = 2f;
             Velocity = 1f;
         }
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera = null)
@@ -38,8 +38,6 @@ namespace monoGame.Actors.Movables.Players
 
         public override void ManageSpriteSpeedBased()
         {
-            Debug.WriteLine(Speed);
-
             SpriteService spriteService = SpriteService.Instance;
             if(Speed.X == 0 && Speed.Y == 0)
             {
@@ -77,7 +75,7 @@ namespace monoGame.Actors.Movables.Players
             FacingRight = true;
         }
 
-        public override bool IsColliding(ActorBase actor)
+        public override void IsColliding(ActorBase actor)
         {
             bool isColiding = false;
             int nbColliderRect = 0;
@@ -86,8 +84,6 @@ namespace monoGame.Actors.Movables.Players
             {
                 nbColliderRect++;
             }
-
-            return isColiding;
         }
 
         public override void Subscribe(ActorBase actor)
@@ -95,9 +91,13 @@ namespace monoGame.Actors.Movables.Players
             Collidables.Add(actor);
         }
 
-        public override void Emit()
+        private int score = 0;
+        public override void Emit(ActorBase actor)
         {
-            throw new NotImplementedException();
+            if(actor != this)
+            {
+                Debug.WriteLine(++score);
+            }
         }
     }
 }

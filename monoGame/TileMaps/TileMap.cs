@@ -28,8 +28,10 @@ namespace monoGame.TileMaps
         public List<Tile> Tiles { get; set; }
         private Texture2D Texture { get; set; }
         public int[,] Map { get; set; }
-        public TileMap(Texture2D texture, int tileWidth, int tileHeight, Rectangle solidColisionRectangle)
+        private int Scale { get; set; } = 1;
+        public TileMap(Texture2D texture, int tileWidth, int tileHeight, Rectangle solidColisionRectangle, int scale)
         {
+            Scale = scale;
             Texture = texture;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
@@ -38,9 +40,9 @@ namespace monoGame.TileMaps
 
         public Tile GetTile(int posX, int posY)
         {
-            if(posX/TileWidth < Map.GetLength(1) && posY/TileHeight < Map.GetLength(0) && posX >= 0 && posY >= 0)
+            if((posX/Scale)/TileWidth < Map.GetLength(1) && (posY/Scale)/TileHeight < Map.GetLength(0) && posX >= 0 && posY >= 0)
             {
-                return Tiles[Map[posY / TileHeight, posX / TileWidth]];
+                return Tiles[Map[(posY/Scale) / TileHeight, (posX/Scale) / TileWidth]];
             }
             return null;
         }
@@ -55,10 +57,12 @@ namespace monoGame.TileMaps
             for(int i = 0; i < nbTiles; i++)
             {
                 Rectangle tileRect = new Rectangle(x, y, TileWidth, TileHeight);
-                x = !isVertical ? x + TileWidth + (i * offset) : x;
-                y = isVertical ? y + TileHeight + (i * offset) : y;
-                
                 Tiles.Add(new Tile(tileRect, isSolid));
+
+                x = !isVertical ? x + TileWidth + ((i + 1) * offset) : x;
+                y = isVertical ? y + TileHeight + ((i + 1) * offset) : y;
+                
+                
             }
         }
 
@@ -70,9 +74,9 @@ namespace monoGame.TileMaps
             {
                 for(int X=0; X<Map.GetLength(1); X++)
                 {
-                    if (camera == null || (x >= Math.Abs(camera.Offset.X) - TileWidth && y >= Math.Abs(camera.Offset.Y) - TileHeight && x <= Math.Abs(camera.Offset.X) + monoGameProjectManager.WindowWidth && y <= Math.Abs(camera.Offset.Y) + monoGameProjectManager.WindowHeight) && Map[Y,X] >= 0)
+                    if (camera == null || (x >= Math.Abs(camera.Offset.X) - (TileWidth * Scale) && y >= Math.Abs(camera.Offset.Y) - (TileHeight * Scale) && x <= Math.Abs(camera.Offset.X) + monoGameProjectManager.WindowWidth && y <= Math.Abs(camera.Offset.Y) + monoGameProjectManager.WindowHeight) && Map[Y,X] >= 0)
                     {
-                        Rectangle tilePos = new Rectangle((int)(x + (camera != null ? camera.Offset.X : 0)), (int)(y + (camera != null ? camera.Offset.Y : 0)), TileWidth, TileHeight);
+                        Rectangle tilePos = new Rectangle((int)(x + (camera != null ? camera.Offset.X : 0)), (int)(y + (camera != null ? camera.Offset.Y : 0)), TileWidth * Scale, TileHeight * Scale);
                         spriteBatch.Draw(Texture, tilePos, Tiles[Map[Y, X]].Value, Color.White);
 
                         if (ParamsManager.gameMode == GameMode.DEBUG && GetTile(x, y).IsSolid)
@@ -82,16 +86,16 @@ namespace monoGame.TileMaps
                             spriteBatch.Draw(SpriteService.Instance.Textures[Textures.RedBackground], drawCollision, Color.White);
                         }
                     }
-                    x += TileWidth;
+                    x += TileWidth * Scale;
                 }
                 x = 0;
-                y += TileHeight;
+                y += TileHeight * Scale;
             }
         }
 
         public Rectangle GetSolidCollisionRectPos(int x, int y)
         {
-            return new Rectangle(x + ((TileWidth - SolidCollisionRectangle.Width) / 2), y + ((TileHeight - SolidCollisionRectangle.Height) / 2), SolidCollisionRectangle.Width, SolidCollisionRectangle.Height);
+            return new Rectangle(x + (((TileWidth * Scale) - (SolidCollisionRectangle.Width * Scale)) / 2), y + (((TileHeight * Scale) - (SolidCollisionRectangle.Height * Scale)) / 2), SolidCollisionRectangle.Width * Scale, SolidCollisionRectangle.Height * Scale);
         }
     }
 }

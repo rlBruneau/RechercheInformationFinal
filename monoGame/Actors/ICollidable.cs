@@ -6,9 +6,9 @@ namespace monoGame.Actors
 {
     public interface ICollidable
     {
-        public bool IsColliding(ActorBase actor);
+        public void IsColliding(ActorBase actor);
         public void Subscribe(ActorBase actor);
-        public void Emit();
+        public void Emit(ActorBase actor);
 
     }
 }

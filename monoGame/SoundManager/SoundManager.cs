@@ -10,7 +10,8 @@ namespace monoGame.SoundManagers
     public interface test { }
     public enum SoundEffects
     {
-        JumpSuper
+        JumpSuper,
+        Coin
     }
     public enum Musics
     {
@@ -56,6 +57,7 @@ namespace monoGame.SoundManagers
         {
             SoundEffectsDict = new Dictionary<Enum, SoundEffect>();
             AddKeyValueToDictionary(SoundEffectsDict, GetKeyValueSound<SoundEffect>(SoundEffects.JumpSuper));
+            AddKeyValueToDictionary(SoundEffectsDict, GetKeyValueSound<SoundEffect>(SoundEffects.Coin));
         }
 
         public void LoadSongs(List<Musics> musics)

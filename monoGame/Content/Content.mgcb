@@ -40,7 +40,7 @@
 #begin MarioTiles.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyColor=148,148,255,255
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
@@ -72,6 +72,12 @@
 /processor:SongProcessor
 /processorParam:Quality=Best
 /build:Sounds/Musics/MusicTest.mp3
+
+#begin Sounds/SoundEffects/coin.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/SoundEffects/coin.wav
 
 #begin Sounds/SoundEffects/jumpSuper.wav
 /importer:WavImporter

@@ -17,7 +17,7 @@ namespace monoGame.Cameras
 
             Target = target;
             CameraFollowPoint = new Vector2(monoGameProjectManager.WindowWidth/2 - Target.Sprite.Width/2, monoGameProjectManager.WindowHeight/2 - Target.Sprite.Height/2);
-            Offset = new Vector2(CameraFollowPoint.X, CameraFollowPoint.Y);
+            Offset = new Vector2(CameraFollowPoint.X - Target.Position.X, CameraFollowPoint.Y - Target.Position.Y);
             MinX = minX;
             MinY = minY;
             MaxX = maxX;

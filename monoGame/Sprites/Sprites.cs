@@ -8,6 +8,8 @@ namespace monoGame.Sprites
     {
         MarioRun,
         MarioIdle,
-        MarioJump
+        MarioJump,
+        Coin,
+        Gate
     }
 }
